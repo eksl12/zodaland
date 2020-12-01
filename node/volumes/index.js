@@ -8,6 +8,10 @@ app.get('/node', function(req, res) {
 	console.log('listening!');
 });
 
+app.get('/', function(req, res) {
+	res.send('hello empty');
+});
+
 app.get('/test', function(req, res) {
 	res.send('hello test');
 });
