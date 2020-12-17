@@ -1,4 +1,5 @@
 var express = require('express');
+var request = require('request');
 
 var app = express();
 var port = 9000;
@@ -12,8 +13,20 @@ app.get('/', function(req, res) {
 	res.send('hello empty');
 });
 
-app.get('/test', function(req, res) {
-	res.send('hello test');
+app.get('/java', function(req, res) {
+	var spr_res = "";
+
+	request.post({
+		headers: {'content-type': 'application/json'},
+		url: 'http://zodaland:9002/test',
+		body: {'test': 'hello', 'test2': 'world'},
+		json: true
+	}, function(error, res, body) {
+		//res.json(body);
+		spr_res = body;
+	});
+	res.send(spr_res + "good");
+
 });
 
 app.listen(port, function() {
