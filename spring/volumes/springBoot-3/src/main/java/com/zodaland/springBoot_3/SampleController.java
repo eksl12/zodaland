@@ -12,4 +12,9 @@ public class SampleController {
 	String home() {
 		return "Hello World!";
 	}
+	@RequestMapping("/java")
+	@ResponseBody
+	String home() {
+		return "Hello World!";
+	}
 }
