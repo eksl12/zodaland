@@ -14,7 +14,7 @@ public class SampleController {
 	}
 	@RequestMapping("/java")
 	@ResponseBody
-	String home() {
-		return "Hello World!";
+	String goJava() {
+		return "Hello Java!";
 	}
 }
