@@ -1040,7 +1040,7 @@ function check($cnt, $relation, $key_arr) {
     while(true) {
 
         //cnt¿¿¿¿ ¿¿¿¿
-        //¿¿¿ ¿¿ ¿¿ ¿¿¿¿ pop
+        //¿¿?¿¿ ¿¿ ¿¿¿¿ pop
         if (count($st) == $cnt) {
             if (checkAlready($key_arr, $st)) {
                 if (checkValid($st, $relation)) {
@@ -1049,9 +1049,7 @@ function check($cnt, $relation, $key_arr) {
             }
             array_pop($st);
         }
-        //temp >= len ¿¿ st¿¿¿
-        //¿¿ temp = array_pop(st) + 1 ¿¿¿
-        if ($temp >= count($relation[0])) {
+        //temp >= len ¿¿ st¿¿?        //¿¿ temp = array_pop(st) + 1 ¿¿?        if ($temp >= count($relation[0])) {
             while (count($st) > 0) {
                 $temp = array_pop($st) + 1;
             }
@@ -1133,7 +1131,7 @@ function check($cnt, $relation, $key_arr) {
     while(true) {
 
         //cnt¿¿¿¿ ¿¿¿¿
-        //¿¿¿ ¿¿ ¿¿ ¿¿¿¿ pop
+        //¿¿?¿¿ ¿¿ ¿¿¿¿ pop
         if (count($st) == $cnt) {
             if (checkAlready($key_arr, $st)) {
                 if (checkValid($st, $relation)) {
@@ -1142,9 +1140,7 @@ function check($cnt, $relation, $key_arr) {
             }
             array_pop($st);
         }
-        //temp >= len ¿¿ st¿¿¿
-        //¿¿ temp = array_pop(st) + 1 ¿¿¿
-        if ($temp >= count($relation[0])) {
+        //temp >= len ¿¿ st¿¿?        //¿¿ temp = array_pop(st) + 1 ¿¿?        if ($temp >= count($relation[0])) {
             while (count($st) > 0) {
                 $temp = array_pop($st) + 1;
             }
@@ -1222,18 +1218,16 @@ function solution($food_times, $k) {
 		if ($food_times[$cir] < 1) {
 			$empty_key = array_search(($cir), $empty);
 			if (($empty_key !== false) && !empty($empty[$pl_cir])) {
-			//¿¿ 0¿¿¿
-				if ($empty_key == $pl_cir) {
+			//¿¿ 0¿¿?				if ($empty_key == $pl_cir) {
 					return -1;
 				}
 				$empty[$empty_key] = $empty[$pl_cir];
 				unset($empty[$pl_cir]);
 			} else if (($empty_key !== false)) {
-			//¿¿ 0¿¿¿	
+			//¿¿ 0¿¿?
 				$empty[$empty_key] = $cir;
 			}else if (!empty($empty[$pl_cir])) {
-			//¿¿ 0¿¿¿
-				$empty[$cir] = $empty[$pl_cir];
+			//¿¿ 0¿¿?				$empty[$cir] = $empty[$pl_cir];
 				unset($empty[$pl_cir]);
 			} else {
 			//¿¿ 0¿¿¿¿
@@ -1293,4 +1287,384 @@ function findNext($food_times, $cir) {
 echo microtime() . "<p>";
 echo solution($food_times, $k);
 echo "<p>" . microtime();
+?>
+
+<?php //k 2019 5
+	$nodeinfo = array(
+					array(5, 3),
+					array(11, 5),
+					array(13, 3),
+					array(3, 5),
+					array(6, 1),
+					array(1, 3),
+					array(8, 6),
+					array(7, 2),
+					array(2, 2)
+					);
+
+	function sol($arr) {
+		$tree = array();
+		$result = array();
+		$return = array();
+
+		for ($i = 0; $i < count($arr); $i++) {
+			$arr[$i][] = $i + 1;
+		}
+
+		sortArr($arr);
+
+		for ($i = 0; $i < count($arr); $i++) {
+			$node = array(
+						'l'		=> -1,
+						'r'		=> -1,
+						'no'	=> $arr[$i][2],
+						'loc'	=> $arr[$i]
+					);
+			makeTree($tree, 0, $node);
+		}
+
+		makePreOrder($result, $tree, $tree[0]);
+		$return[] = $result;
+		$result = array();
+		makePostOrder($result, $tree, $tree[0]);
+		$return[] = $result;
+		
+		return $return;
+	}
+
+	function sortArr(&$arr) {
+		$temp = array();
+		for ($i = 0; $i < count($arr); $i++) {
+			for ($j = $i; $j < count($arr); $j++) {
+				if ($arr[$i][1] < $arr[$j][1]) {
+					$temp = $arr[$i];
+					$arr[$i] = $arr[$j];
+					$arr[$j] = $temp;
+				}
+			}
+		}
+
+	}
+
+	function makeTree(&$tree, $level, $node) {
+		if (empty($tree)) {
+			$tree[] = $node;
+			return;
+		}
+
+		if ($tree[$level]['loc'][0] > $node['loc'][0]) {
+			if ($tree[$level]['l'] != -1) {
+				makeTree($tree, $tree[$level]['l'], $node);
+			} else {
+				$tree[] = $node;
+				$tree[$level]['l'] = count($tree) - 1;
+			}
+		} else {
+			if ($tree[$level]['r'] != -1) {
+				makeTree($tree, $tree[$level]['r'], $node);
+			} else {
+				$tree[] = $node;
+				$tree[$level]['r'] = count($tree) - 1;
+			}
+		}
+		return;
+	}
+
+	function makePreOrder(&$result, $tree, $node) {
+		$result[] = $node['no'];
+		if ($node['l'] != -1) {
+			makePreOrder($result, $tree, $tree[$node['l']]);
+		}
+		if ($node['r'] != -1) {
+			makePreOrder($result, $tree, $tree[$node['r']]);
+		}
+	}
+
+	function makePostOrder(&$result, $tree, $node) {
+		if ($node['l'] != -1) {
+			makePostOrder($result, $tree, $tree[$node['l']]);
+		}
+		if ($node['r'] != -1) {
+			makePostOrder($result, $tree, $tree[$node['r']]);
+		}
+		$result[] = $node['no'];
+	}
+
+	print_r(sol($nodeinfo));
+?>
+
+<?php //2019 k 6
+	$qu = array(
+			array(
+				'word' => "blind",
+				'pages' => array(
+					"<html lang='ko' xml:lang='ko' xmlns='http://www.w3.org/1999/xhtml'>\n<head>\n<meta charset='utf-8'>\n<meta property='og:url' content='https://a.com'/>\n</head>\n<body>\nBlind Lorem Blind ipsum dolor Blind test sit amet, consectetur adipscing elit.\n<a href='https://b.com'>Ling to b</a>\n</body>\n</html>",
+					"<html lang='ko' xml:lang='ko' xmlns='http://www.w3.org/1999/xhtml'>\n<head>\n<meta charset='utf-8'>\n<meta property='og:url' content='https://b.com'/>\n</head>\n<body>\nSuspendisse potenti. Vivamus venenatis tellus non turpis bibendum,\n<a href='https://a.com'>Link to a</a>\nblind sed congue urna varius. Suspendise feugiat nisl ligula, quis malesuada felis hendrerit ut.\n<a href='https://c.com'>Ling to c</a>\n</body>\n</html>",
+					"<html lang='ko' xml:lang='ko' xmlns='http://www.w3.org/1999/xhtml'>\n<head>\n<meta charset='utf-8'>\n<meta property='og:url' content='https://c.com'/>\n</head>\n<body>\nUt condimentum urna at felis sodales rutrum. Sed dapabus cursus diam, non interdum nulla tempor nec. Phasellus rutrum enim at orci consectetu blind\n<a href='https://a.com'>Link to a</a>\n</body>\n</html>"
+					)
+				),
+// 3 1, 1 2, 1 1
+// a : b 0.5, c 1	4.5
+// b : a 3			4
+// c : b 0.5		1.5
+			array(
+				'word' => "Muzi",
+				'pages' => array(
+					"<html lang='ko' xml:lang='ko' xmlns='http://www.w3.org/1999/xhtml'>\n<head>\n<meta charset='utf-8'>\n<meta property='og:url' content='https://careers.k.com/interview/list'/>\n</head>\n<body>\n<a href='https://p.co.kr/learn/courses/4673'></a>#!MuziMuzi!?jayg07con&&\n\n</body>\n</html>",
+					"<html lang='ko' xml:lang='ko' xmlns='http://www.w3.org/1999/xhtml'>\n<head>\n<meta charset='utf-8'>\n<meta property='og:url' content='https://kp.com'/>\n</head>\n<body>\n\con%\tmuzI92apeach&2<a href='https://hashcode.co.kr/tos'></a>\n\n\n\t^\n</body>\n</html>"
+					)
+				)
+			);
+// 0 1, 1 1
+//a : 0			0
+//b : 0			1
+
+	function getContent($htmls) {
+		$html_arr = explode("\n", $htmls);
+		$content = "";
+		$url = "";
+
+		for ($i = 0; $i < count($html_arr); $i++) {
+			if (preg_match("/^<\/head>$/", $html_arr[$i])) {
+				break;
+			}
+			if (!preg_match("/^<meta/", $html_arr[$i])) {
+				continue;
+			}
+			if (strpos($html_arr[$i], "content") === false) {
+				continue;
+			}
+			$url = getUrl($html_arr[$i], "content");
+
+			break;
+		}
+		return $url;
+	}
+
+	function getLink($htmls) {
+		$html_arr = explode("\n", $htmls);
+		$tags = array();
+		$result = array();
+		$pos = 0;
+
+		for ($i = (count($html_arr) - 1); $i >= 0; $i--) {
+			if (preg_match("/^<body/", $html_arr[$i])) {
+				break;
+			}
+			if (!preg_match("/<a\s*href/", $html_arr[$i])) {
+				continue;
+			}
+
+			$tags = explode("<a", $html_arr[$i]);
+			$tags = array_filter($tags);
+			$tags = array_values($tags);
+
+			for ($j = 0; $j < count($tags); $j++) {
+				if (strpos($tags[$j], "href")) {
+					$result[] = getUrl($tags[$j], "href");
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	function getUrl($html, $target) {
+		$url = "";
+
+		while (strpos($html, $target) !== false) {
+			$html = substr($html, (strpos($html, "'") + 1));
+		}
+		$url = substr($html, 0, strpos($html, "'"));
+
+		return $url;
+	}
+
+	function getScore($htmls, $word) {
+		$html_arr = explode("\n", $htmls);
+		$raw_words = array();
+		$lower_words = "";
+		$score = 0;
+		$pos = 0;
+		$temp = "";
+		$word = strtolower($word);
+		
+		for ($i = (count($html_arr) - 1); $i >= 0; $i--) {
+			if (preg_match("/^<body/", $html_arr[$i])) {
+				break;
+			}
+			$raw_words = preg_split("/<a.*?>/", $html_arr[$i]);
+
+			for ($j = 0; $j < count($raw_words); $j++) {
+				$lower_words = strtolower($raw_words[$j]);
+				$pos = strpos($lower_words, $word);
+				while ($pos !== false) {
+					$temp = substr($lower_words, 0, ($pos + strlen($word) + 1));
+					if (!preg_match("/[a-z]{$word}/", $temp) && !preg_match("/{$word}[a-z]/", $temp)) {
+						$score++;
+					}
+					$lower_words = substr($lower_words, ($pos + 1));
+					$pos = strpos($lower_words, $word);
+				}
+			}
+		}
+		return $score;
+	}
+
+	function solution($word, $pages) {
+		$url = array();
+		$links = array();
+		$scores = array();
+		$result = array();
+		$return = 0;
+
+		for ($i = 0; $i < count($pages); $i++) {
+			$scores[] = getScore($pages[$i], $word);
+			$result = $scores;
+
+			$url[] = getContent($pages[$i]);
+
+			$links[] = getLink($pages[$i]);
+		}
+		for ($i = 0; $i < count($links); $i++) {
+			for ($j = 0; $j < count($links[$i]); $j++) {
+				for ($k = 0; $k < count($url); $k++) {
+					if ($links[$i][$j] == $url[$k] && $i != $k) {
+						$result[$k] += ($scores[$i] / count($links[$i]));
+					}
+				}
+			}
+		}
+
+		for ($i = 1; $i < count($result); $i++) {
+			if ($result[$return] < $result[$i]) {
+				$return = $i;
+			}
+		}
+		return $return;
+	}
+
+	solution($qu[0]['word'], $qu[0]['pages']);
+?>
+
+<?php //2019 k 7
+	$board = array(
+		array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+		array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+		array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+		array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+		array(0, 0, 0, 0, 0, 0, 4, 0, 0, 0),
+		array(0, 0, 0, 0, 0, 4, 4, 0, 0, 0),
+		array(0, 0, 0, 0, 3, 0, 4, 0, 0, 0),
+		array(0, 0, 0, 2, 3, 0, 0, 0, 5, 5),
+		array(1, 2, 2, 2, 3, 3, 0, 0, 0, 5),
+		array(1, 1, 1, 0, 0, 0, 0, 0, 0, 5),
+		);
+		//2
+
+	function isAvailShape(&$board, $loc, $no) {
+		$shape = array(
+					//100
+					//111
+					array(
+						array(0, 1),
+						array(1, 1),
+						array(2, 1)
+					),
+					//01
+					//01
+					//11
+					array(
+						array(0, 1),
+						array(-1, 2),
+						array(0, 2)
+					),
+					//10
+					//10
+					//11
+					array(
+						array(0, 1),
+						array(0, 2),
+						array(1, 2)
+					),
+					//001
+					//111
+					array(
+						array(0, 1),
+						array(-1, 1),
+						array(-2, 1)
+					),
+					//010
+					//111
+					array(
+						array(-1, 1),
+						array(0, 1),
+						array(1, 1)
+					)
+				);
+		$equal_score = 0;
+		for ($i = 0; $i < 5; $i++) {
+			for ($j = 1; $j < 4; $j++) {
+				if ($board[$loc[1]][$loc[0]] == $board[$loc[1] + $shape[$i][$j][1]][$loc[0] + $shape[$i][$j][0]]) {
+					$equal_score++;
+				}
+			}
+			if ($equal_score == 3) {
+				if (isAvailBreak($board, $loc, $i)) {
+					$board[$loc[1]][$loc[0]] = 0;
+					for ($k = 0; $k < 3; $k++) {
+						$board[$loc[1] + $shape[$i][$k][1]][$loc[0] + $shape[$i][$k][0]] = 0;
+					}
+					return true;
+				}
+			} else {
+				$equal_score = 0;
+			}
+		}
+
+		return false;
+	}
+
+	function isAvailBreak($board, $loc, $shape_no) {
+		$avail_loc_list = array(
+							array(1, 2),
+							array(-1),
+							array(1),
+							array(-1, -2),
+							array(-1, 1)
+						);
+		foreach($avail_loc_list[$shape_no] as $val) {
+			for ($i = 0; $i < $loc[1]; $i++) {
+				if ($board[$i][$loc[0] + $val] != 0) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	function solution($board) {
+		$avail_list = array();
+		$unavail_list = array();
+		$score = 0;
+
+		for ($i = 0; $i < count($board); $i++) {
+			for ($j = 0; $j < count($board[$i]); $j++) {
+				if ($board[$i][$j] == 0) {
+					continue;
+				}
+				if (in_array($board[$i][$j], $unavail_list) || in_array($board[$i][$j], $avail_list)) {
+					continue;
+				}
+				if (isAvailShape($board, array($j, $i), $board[$i][$j])) {
+					$score++;
+				} else {
+					$unavail_list[] = $board[$i][$j];
+				}
+			}
+		}
+		echo $score;
+	}
+
+	solution($board);
 ?>
