@@ -10,6 +10,7 @@ public class SampleController {
 	@RequestMapping("/")
 	@ResponseBody
 	String home() {
+		System.out.println("test");
 		return "Hello World!";
 	}
 	@RequestMapping("/java")
