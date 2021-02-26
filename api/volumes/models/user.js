@@ -10,10 +10,10 @@
 const db = require('./db');
 
 const User = {
-	
-
-	getConnection : () => {
+	getConnection : (data) => {
 		return new Promise( (resolve, reject) => {
+			User.params = data
+
 			db.getConnection((err, con) => {
 				if (err) {
 					reject(err)
@@ -23,10 +23,10 @@ const User = {
 		})
 	},
 
-	create : (con, param) => {
+	create : (con) => {
 		return new Promise( (resolve, reject) => {
 			var sql = "INSERT INTO user (id, password, name, reg_date) VALUES (?, ?, ?, DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))";
-			con.query(sql, param, (err, rows) => {
+			con.query(sql, User.params, (err, rows) => {
 				con.release()
 				if (err) {
 					reject(err)
@@ -36,11 +36,11 @@ const User = {
 		})
 	},
 
-	verify : (con, param) => {
+	verify : (con) => {
 		return new Promise( (resolve, reject) => {
-			var sql = "SELECT id, name FROM user WHERE id = ? AND password = ?";
+			var sql = "SELECT no,id, name FROM user WHERE id = ? AND password = ?";
 			
-			con.query(sql, param, (err, rows) => {
+			con.query(sql, User.params, (err, rows) => {
 				con.release()
 				if (err) {
 					reject(err)
@@ -50,11 +50,11 @@ const User = {
 		})
 	},
 
-	find : (con, param) => {
+	find : (con) => {
 		return new Promise( (resolve, reject) => {
 			var sql = "SELECT count(no) as count FROM user WHERE id = ?";
 			
-			con.query(sql, param, (err, rows) => {
+			con.query(sql, User.params, (err, rows) => {
 				con.release()
 				if (err) {
 					reject(err)

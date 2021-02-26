@@ -1,22 +1,20 @@
 const user = require('../../models/user')
 const hash = require('../../library/hash')
-const jwt = require('jsonwebtoken')
 
 exports.register = (req, res) => {
 	const body = req.body
 	var password = body.password
-	var hashPassword = hash.convert(password)
-	var param = [ body.id, hashPassword, body.name ]
 
-	const findUserById = (con) => {
-		if (!body.id) {
-			throw new Error({
-				code: '9999',
-				message: 'not found id'
-			})
-		} else {
-			return user.find(con, body.id)
-		}
+	const checkValue = (con) => {
+		return new Promise((resolve, reject) => {
+			if (body.id === undefined || body.password === undefined || body.name === undefined) {
+				reject({
+					code: '9999',
+					message: 'invalid value'
+				})
+			}
+			resolve(body.id)	
+		})
 	}
 
 	const checkDuplicateUser = (result) => {
@@ -29,13 +27,11 @@ exports.register = (req, res) => {
 					message: 'already exist user'
 				})
 			} else {
-				resolve(user.getConnection())
+				const hashPassword = hash.convert(password)
+				const params = [ body.id, hashPassword, body.name]
+				resolve(params)
 			}
 		});
-	}
-
-	const create = (con) => {
-		return user.create(con, param)
 	}
 
 	const respond = (result) => {
@@ -49,10 +45,12 @@ exports.register = (req, res) => {
 		res.status(409).json(error);
 	}
 
-	user.getConnection()
-	.then(findUserById)
+	checkValue()
+	.then(user.getConnection)
+	.then(user.find)
 	.then(checkDuplicateUser)
-	.then(create)
+	.then(user.getConnection)
+	.then(user.create)
 	.then(respond)	
 	.catch(respondError)
 }
@@ -60,28 +58,16 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
 	var body = req.body
 	var password = body.password
-	var hashPassword = hash.convert(password)
-	var param = [ body.id, hashPassword ]
 
-	const findUserById = (con) => {
+	const checkValue = (con) => {
 		return new Promise((resolve, reject) => {
-			if (!body.id) {
+			if (body.id === undefined || body.password === undefined) {
 				reject({
 					code: '9999',
 					message: 'not found id'
 				})
 			}
-			
-			user.find(con, body.id)
-			.then((result) => {
-				resolve(result)
-			})
-			.catch((err) => {
-				reject({
-					code: '9000',
-					message: 'db error'
-				})
-			})
+			resolve(body.id)
 		})
 	}
 
@@ -95,13 +81,11 @@ exports.login = (req, res) => {
 					message: 'not found user'
 				})
 			} else {
-				resolve(user.getConnection())
+				const hashPassword = hash.convert(password)
+				const params = [ body.id, hashPassword ]
+				resolve(params)
 			}
 		});
-	}
-
-	const login = (con) => {
-		return user.verify(con, param)
 	}
 
 	const checkLogin = (user) => {
@@ -128,10 +112,12 @@ exports.login = (req, res) => {
 		res.status(403).json(error)
 	}
 
-	user.getConnection()
-	.then(findUserById)
+	checkValue()
+	.then(user.getConnection)
+	.then(user.find)
 	.then(checkUser)
-	.then(login)
+	.then(user.getConnection)
+	.then(user.verify)
 	.then(checkLogin)
 	.then(respond)
 	.catch(respondError)
